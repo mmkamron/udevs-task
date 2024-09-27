@@ -1,0 +1,42 @@
+services:
+  postgres:
+    image: postgres:latest
+    container_name: "postgres"
+    user: postgres
+    env_file:
+      - ./.env
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    ports:
+      - 5432:5432
+    restart: always
+    networks:
+      - miniTwitterNetwork
+    healthcheck:
+      test: ["CMD", "pg_isready"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  backend:
+    build:
+      context: .
+      dockerfile: dockerfile
+    container_name: "backend"
+    ports:
+      - 8080:8080
+    env_file:
+      - ./.env
+    depends_on:
+      postgres:
+        condition: service_healthy
+    restart: always
+    networks:
+      - miniTwitterNetwork
+
+networks:
+  miniTwitterNetwork:
+    driver: bridge
+
+volumes:
+  postgres_data:

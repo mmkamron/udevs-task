@@ -1,0 +1,3 @@
+addr: ":8080"
+jwt_secret: "supersecret"
+dburl: "postgresql://postgres:postgres@localhost/minitwitter?sslmode=disable"

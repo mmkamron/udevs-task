@@ -1,0 +1,135 @@
+definitions:
+  data.Tweet:
+    properties:
+      content:
+        type: string
+      createdAt:
+        type: string
+      id:
+        type: integer
+      userID:
+        type: integer
+    type: object
+  data.User:
+    properties:
+      id:
+        type: integer
+      name:
+        type: string
+      username:
+        type: string
+    type: object
+info:
+  contact: {}
+paths:
+  /logout:
+    get:
+      consumes:
+      - application/json
+      description: Clears the authentication token by setting an expired cookie
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: you are logged out
+          schema:
+            type: string
+      summary: Logs out the user
+      tags:
+      - Authentication
+  /tweets:
+    post:
+      consumes:
+      - application/json
+      description: Authenticated users can post a new tweet with text content
+      parameters:
+      - description: Tweet content
+        in: body
+        name: content
+        required: true
+        schema:
+          properties:
+            content:
+              type: string
+          type: object
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Tweet posted successfully
+          schema:
+            $ref: '#/definitions/data.Tweet'
+        "400":
+          description: Bad request
+          schema:
+            type: string
+        "500":
+          description: Server error
+          schema:
+            type: string
+      security:
+      - ApiKeyAuth: []
+      summary: Post a new tweet
+      tags:
+      - Tweets
+  /v1/signin:
+    post:
+      consumes:
+      - application/json
+      description: Authenticates a user with username and password
+      parameters:
+      - description: Login credentials
+        in: body
+        name: login
+        required: true
+        schema:
+          type: object
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Authentication successful
+          schema:
+            type: string
+        "400":
+          description: Invalid request payload
+          schema:
+            type: string
+        "401":
+          description: Invalid credentials
+          schema:
+            type: string
+        "500":
+          description: Internal server error
+          schema:
+            type: string
+      summary: Sign in a user
+      tags:
+      - Authentication
+  /v1/signup:
+    post:
+      consumes:
+      - application/json
+      description: Create a new user account
+      parameters:
+      - description: User Info
+        in: body
+        name: user
+        required: true
+        schema:
+          type: object
+      produces:
+      - application/json
+      responses:
+        "202":
+          description: Accepted
+          schema:
+            $ref: '#/definitions/data.User'
+        "422":
+          description: Error
+          schema:
+            type: string
+      summary: Register a new user
+      tags:
+      - Authentication
+swagger: "2.0"
