@@ -1,11 +1,15 @@
-FROM golang:1.23
+FROM golang:1.23-alpine AS builder
 
-WORKDIR /usr/src/app
-
-COPY go.mod go.sum ./
-RUN go mod download && go mod verify
+WORKDIR /app
 
 COPY . .
-RUN go build -ldflags='-s -w' -v -o /usr/local/bin/app ./...
 
-CMD ["app"]
+RUN go build -ldflags='-s -w' -o main ./cmd/api/
+
+FROM alpine:3.16
+
+WORKDIR /app
+
+COPY --from=builder /app/main .
+
+CMD ["./main"]
