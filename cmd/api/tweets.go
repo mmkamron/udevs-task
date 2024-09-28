@@ -12,12 +12,13 @@ import (
 // @Tags Tweets
 // @Accept  json
 // @Produce  json
+// @Param token header string true "JWT token required for authentication"
 // @Param content body object{content=string} true "Tweet content"
 // @Success 201 {object} data.Tweet "Tweet posted successfully"
 // @Failure 400 {string} string "Bad request"
 // @Failure 500 {string} string "Server error"
 // @Security ApiKeyAuth
-// @Router /tweets [post]
+// @Router /v1/tweets [post]
 func (app *application) postTweet(w http.ResponseWriter, r *http.Request) {
 	var input struct {
 		Content string `json:"content"`

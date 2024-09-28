@@ -15,8 +15,8 @@ import (
 // @Tags Authentication
 // @Accept  json
 // @Produce  json
-// @Param user body object true "User Info"
-// @Success 202 {object} data.User
+// @Param user body data.User true "User Info"
+// @Success 202 {string} string "Created"
 // @Failure 422 {string} string "Error"
 // @Router /v1/signup [post]
 func (app *application) signUp(w http.ResponseWriter, r *http.Request) {
@@ -66,7 +66,7 @@ func (app *application) signUp(w http.ResponseWriter, r *http.Request) {
 // @Tags Authentication
 // @Accept json
 // @Produce json
-// @Param login body object true "Login credentials"
+// @Param login body object{username=string, password=string} true "Login credentials"
 // @Success 200 {string} string "Authentication successful"
 // @Failure 400 {object} string "Invalid request payload"
 // @Failure 401 {object} string "Invalid credentials"
@@ -74,8 +74,8 @@ func (app *application) signUp(w http.ResponseWriter, r *http.Request) {
 // @Router /v1/signin [post]
 func (app *application) signIn(w http.ResponseWriter, r *http.Request) {
 	var input struct {
-		Username string
-		Password string
+		Username string `json:"username"`
+		Password string `json:"password"`
 	}
 
 	if err := json.NewDecoder(r.Body).Decode(&input); err != nil {
@@ -128,8 +128,9 @@ func (app *application) signIn(w http.ResponseWriter, r *http.Request) {
 // @Tags Authentication
 // @Accept  json
 // @Produce  json
+// @Param token header string true "JWT token required for authentication"
 // @Success 200 {string} string "you are logged out"
-// @Router /logout [get]
+// @Router /v1/logout [get]
 func (app *application) logout(w http.ResponseWriter, r *http.Request) {
 	http.SetCookie(w, &http.Cookie{
 		Name:     "token",

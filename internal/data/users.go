@@ -20,10 +20,10 @@ type UserModel struct {
 var AnonymousUser = &User{}
 
 type User struct {
-	ID       int64
+	ID       int64 `json:"-"`
 	Name     string
 	Username string
-	Password password `json:"-"`
+	Password password
 }
 
 type password struct {

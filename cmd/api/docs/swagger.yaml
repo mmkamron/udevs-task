@@ -12,21 +12,29 @@ definitions:
     type: object
   data.User:
     properties:
-      id:
-        type: integer
       name:
         type: string
+      password:
+        $ref: '#/definitions/data.password'
       username:
         type: string
+    type: object
+  data.password:
     type: object
 info:
   contact: {}
 paths:
-  /logout:
+  /v1/logout:
     get:
       consumes:
       - application/json
       description: Clears the authentication token by setting an expired cookie
+      parameters:
+      - description: JWT token required for authentication
+        in: header
+        name: token
+        required: true
+        type: string
       produces:
       - application/json
       responses:
@@ -37,41 +45,6 @@ paths:
       summary: Logs out the user
       tags:
       - Authentication
-  /tweets:
-    post:
-      consumes:
-      - application/json
-      description: Authenticated users can post a new tweet with text content
-      parameters:
-      - description: Tweet content
-        in: body
-        name: content
-        required: true
-        schema:
-          properties:
-            content:
-              type: string
-          type: object
-      produces:
-      - application/json
-      responses:
-        "201":
-          description: Tweet posted successfully
-          schema:
-            $ref: '#/definitions/data.Tweet'
-        "400":
-          description: Bad request
-          schema:
-            type: string
-        "500":
-          description: Server error
-          schema:
-            type: string
-      security:
-      - ApiKeyAuth: []
-      summary: Post a new tweet
-      tags:
-      - Tweets
   /v1/signin:
     post:
       consumes:
@@ -83,6 +56,11 @@ paths:
         name: login
         required: true
         schema:
+          properties:
+            ' password':
+              type: string
+            username:
+              type: string
           type: object
       produces:
       - application/json
@@ -117,14 +95,14 @@ paths:
         name: user
         required: true
         schema:
-          type: object
+          $ref: '#/definitions/data.User'
       produces:
       - application/json
       responses:
         "202":
-          description: Accepted
+          description: Created
           schema:
-            $ref: '#/definitions/data.User'
+            type: string
         "422":
           description: Error
           schema:
@@ -132,4 +110,44 @@ paths:
       summary: Register a new user
       tags:
       - Authentication
+  /v1/tweets:
+    post:
+      consumes:
+      - application/json
+      description: Authenticated users can post a new tweet with text content
+      parameters:
+      - description: JWT token required for authentication
+        in: header
+        name: token
+        required: true
+        type: string
+      - description: Tweet content
+        in: body
+        name: content
+        required: true
+        schema:
+          properties:
+            content:
+              type: string
+          type: object
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Tweet posted successfully
+          schema:
+            $ref: '#/definitions/data.Tweet'
+        "400":
+          description: Bad request
+          schema:
+            type: string
+        "500":
+          description: Server error
+          schema:
+            type: string
+      security:
+      - ApiKeyAuth: []
+      summary: Post a new tweet
+      tags:
+      - Tweets
 swagger: "2.0"

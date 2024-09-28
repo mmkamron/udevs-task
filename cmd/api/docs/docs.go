@@ -15,7 +15,7 @@ const docTemplate = `{
     "host": "{{.Host}}",
     "basePath": "{{.BasePath}}",
     "paths": {
-        "/logout": {
+        "/v1/logout": {
             "get": {
                 "description": "Clears the authentication token by setting an expired cookie",
                 "consumes": [
@@ -28,65 +28,18 @@ const docTemplate = `{
                     "Authentication"
                 ],
                 "summary": "Logs out the user",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "JWT token required for authentication",
+                        "name": "token",
+                        "in": "header",
+                        "required": true
+                    }
+                ],
                 "responses": {
                     "200": {
                         "description": "you are logged out",
-                        "schema": {
-                            "type": "string"
-                        }
-                    }
-                }
-            }
-        },
-        "/tweets": {
-            "post": {
-                "security": [
-                    {
-                        "ApiKeyAuth": []
-                    }
-                ],
-                "description": "Authenticated users can post a new tweet with text content",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "Tweets"
-                ],
-                "summary": "Post a new tweet",
-                "parameters": [
-                    {
-                        "description": "Tweet content",
-                        "name": "content",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "type": "object",
-                            "properties": {
-                                "content": {
-                                    "type": "string"
-                                }
-                            }
-                        }
-                    }
-                ],
-                "responses": {
-                    "201": {
-                        "description": "Tweet posted successfully",
-                        "schema": {
-                            "$ref": "#/definitions/data.Tweet"
-                        }
-                    },
-                    "400": {
-                        "description": "Bad request",
-                        "schema": {
-                            "type": "string"
-                        }
-                    },
-                    "500": {
-                        "description": "Server error",
                         "schema": {
                             "type": "string"
                         }
@@ -114,7 +67,15 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "type": "object"
+                            "type": "object",
+                            "properties": {
+                                " password": {
+                                    "type": "string"
+                                },
+                                "username": {
+                                    "type": "string"
+                                }
+                            }
                         }
                     }
                 ],
@@ -166,19 +127,82 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "type": "object"
+                            "$ref": "#/definitions/data.User"
                         }
                     }
                 ],
                 "responses": {
                     "202": {
-                        "description": "Accepted",
+                        "description": "Created",
                         "schema": {
-                            "$ref": "#/definitions/data.User"
+                            "type": "string"
                         }
                     },
                     "422": {
                         "description": "Error",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
+        "/v1/tweets": {
+            "post": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "description": "Authenticated users can post a new tweet with text content",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Tweets"
+                ],
+                "summary": "Post a new tweet",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "JWT token required for authentication",
+                        "name": "token",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "description": "Tweet content",
+                        "name": "content",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "object",
+                            "properties": {
+                                "content": {
+                                    "type": "string"
+                                }
+                            }
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Tweet posted successfully",
+                        "schema": {
+                            "$ref": "#/definitions/data.Tweet"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad request",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "500": {
+                        "description": "Server error",
                         "schema": {
                             "type": "string"
                         }
@@ -208,16 +232,19 @@ const docTemplate = `{
         "data.User": {
             "type": "object",
             "properties": {
-                "id": {
-                    "type": "integer"
-                },
                 "name": {
                     "type": "string"
+                },
+                "password": {
+                    "$ref": "#/definitions/data.password"
                 },
                 "username": {
                     "type": "string"
                 }
             }
+        },
+        "data.password": {
+            "type": "object"
         }
     }
 }`
